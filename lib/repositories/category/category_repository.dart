@@ -10,11 +10,8 @@ class CategoryRepository extends BaseCategoryRepository {
 
   @override
   Stream<List<Category>> getAllCategories() {
-    return _firebaseFirestore
-        .collection('categories')
-        .snapshots()
-        .map((snapshot) {
-      return snapshot.docs.map((doc) => Category.fromSnapshot(doc)).toList();
-    });
+    return _firebaseFirestore.collection('categories').snapshots().map(
+        (snapshot) =>
+            snapshot.docs.map((doc) => Category.fromSnapshot(doc)).toList());
   }
 }

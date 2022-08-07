@@ -1,6 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ecommerce/blocs/product/product_bloc.dart';
 import 'package:ecommerce/models/models.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../widgets/widgets.dart';
 
@@ -34,20 +36,42 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           SectionTitle(title: 'RECOMENDED'),
-          // Product Carousel
-          // Product Card
-          // ProductCard(
-          //  product: Product.products[0],
-          //),
-          ProductCarousel(
-            products: Product.products
-                .where((product) => product.isRecommended)
-                .toList(),
+          BlocBuilder<ProductBloc, ProductState>(
+            builder: (context, state) {
+              if (state is ProductLoading) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (state is ProductLoaded) {
+                return ProductCarousel(
+                  products: Product.products
+                      .where((product) => product.isRecommended)
+                      .toList(),
+                );
+              } else {
+                return Text('Somting went wrong');
+              }
+            },
           ),
           SectionTitle(title: 'MOST POPULAR'),
-          ProductCarousel(
-            products:
-                Product.products.where((product) => product.isPopular).toList(),
+          BlocBuilder<ProductBloc, ProductState>(
+            builder: (context, state) {
+              if (state is ProductLoading) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (state is ProductLoaded) {
+                return ProductCarousel(
+                  products: state.products
+                      .where((product) => product.isPopular)
+                      .toList(),
+                );
+              } else {
+                return Text('Somthing went wrong');
+              }
+            },
           ),
         ],
       ),
