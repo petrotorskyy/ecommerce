@@ -1,53 +1,92 @@
-import 'package:ecommerce/blocs/category/category_bloc.dart';
-import 'package:ecommerce/blocs/product/product_bloc.dart';
-import 'package:ecommerce/blocs/wishlist/wishlist_bloc.dart';
-import 'package:ecommerce/config/app_router.dart';
-import 'package:ecommerce/config/theme.dart';
-import 'package:ecommerce/repositories/category/category_repository.dart';
-import 'package:ecommerce/screens/screens.dart';
-import 'package:ecommerce/simple_bloc_observer.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-import 'blocs/cart/cart_bloc.dart';
-import 'repositories/product/product_repository.dart';
+import '/config/theme.dart';
+import '/config/app_router.dart';
+import '/blocs/blocs.dart';
+import '/repositories/repositories.dart';
+import '/screens/screens.dart';
+import '/simple_bloc_observer.dart';
+import '/models/models.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  Bloc.observer = SimpleBlocObserver();
-  runApp(const MyApp());
+  await Hive.initFlutter();
+  Hive.registerAdapter(ProductAdapter());
+  BlocOverrides.runZoned(
+    () {
+      runApp(MyApp());
+    },
+    blocObserver: SimpleBlocObserver(),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => WishlistBloc()..add(StartWishlist())),
-        BlocProvider(create: (_) => CartBloc()..add(CartStarted())),
-        BlocProvider(
-          create: (_) => CategoryBloc(
-            categoryRepository: CategoryRepository(),
-          )..add(LoadCategories()),
+    return MaterialApp(
+      title: 'x3m ecommerce project',
+      debugShowCheckedModeBanner: false,
+      theme: theme(),
+      home: MultiRepositoryProvider(
+        providers: [
+          RepositoryProvider(
+            create: (context) => AuthRepository(),
+          ),
+          RepositoryProvider(
+            create: (context) => UserRepository(),
+          ),
+        ],
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) => AuthBloc(
+                authRepository: context.read<AuthRepository>(),
+                userRepository: context.read<UserRepository>(),
+              ),
+            ),
+            BlocProvider(
+              create: (_) => CartBloc()..add(LoadCart()),
+            ),
+            BlocProvider(
+              create: (_) => PaymentBloc()..add(LoadPaymentMethod()),
+            ),
+            BlocProvider(
+              create: (context) => CheckoutBloc(
+                cartBloc: context.read<CartBloc>(),
+                paymentBloc: context.read<PaymentBloc>(),
+                checkoutRepository: CheckoutRepository(),
+              ),
+            ),
+            BlocProvider(
+              create: (_) => WishlistBloc(
+                localStorageRepository: LocalStorageRepository(),
+              )..add(StartWishlist()),
+            ),
+            BlocProvider(
+              create: (_) => CategoryBloc(
+                categoryRepository: CategoryRepository(),
+              )..add(
+                  LoadCategories(),
+                ),
+            ),
+            BlocProvider(
+              create: (_) => ProductBloc(
+                productRepository: ProductRepository(),
+              )..add(LoadProducts()),
+            ),
+          ],
+          child: MaterialApp(
+            title: 'x3m ecommerce project',
+            debugShowCheckedModeBanner: false,
+            theme: theme(),
+            onGenerateRoute: AppRouter.onGenerateRoute,
+            initialRoute: SplashScreen.routeName,
+          ),
         ),
-        BlocProvider(
-          create: (_) => ProductBloc(
-            productRepository: ProductRepository(),
-          )..add(LoadProducts()),
-        )
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Ecommerce App',
-        theme: theme(),
-        onGenerateRoute: AppRouter.onGenerateRoute,
-        initialRoute: SplashScreen.routeName,
-        home: HomeScreen(),
       ),
     );
   }

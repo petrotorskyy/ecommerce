@@ -12,10 +12,8 @@ class CategoryLoading extends CategoryState {}
 class CategoryLoaded extends CategoryState {
   final List<Category> categories;
 
-  const CategoryLoaded({this.categories = const <Category>[]});
+  CategoryLoaded({this.categories = const <Category>[]});
 
   @override
   List<Object> get props => [categories];
 }
-
-class CategoryError extends CategoryState {}

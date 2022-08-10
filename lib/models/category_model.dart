@@ -5,10 +5,16 @@ class Category extends Equatable {
   final String name;
   final String imageUrl;
 
-  const Category({required this.name, required this.imageUrl});
+  const Category({
+    required this.name,
+    required this.imageUrl,
+  });
 
   @override
-  List<Object?> get props => [name, imageUrl];
+  List<Object?> get props => [
+        name,
+        imageUrl,
+      ];
 
   static Category fromSnapshot(DocumentSnapshot snap) {
     Category category = Category(
@@ -20,16 +26,19 @@ class Category extends Equatable {
 
   static List<Category> categories = [
     Category(
-        name: 'Soft Drinks',
-        imageUrl:
-            'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80'),
+      name: 'Soft Drinks',
+      imageUrl:
+          'https://images.unsplash.com/photo-1534057308991-b9b3a578f1b1?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80', //https://unsplash.com/photos/5lZhD2qQ2SE
+    ),
     Category(
-        name: 'Smoothies',
-        imageUrl:
-            'https://images.unsplash.com/photo-1522205408450-add114ad53fe?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=368f45b0888aeb0b7b08e3a1084d3ede&auto=format&fit=crop&w=1950&q=80'),
+      name: 'Smoothies',
+      imageUrl:
+          'https://images.unsplash.com/photo-1502741224143-90386d7f8c82?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80', //https://unsplash.com/photos/m741tj4Cz7M
+    ),
     Category(
-        name: 'Water',
-        imageUrl:
-            'https://images.unsplash.com/photo-1519985176271-adb1088fa94c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=a0c8d632e977f94e5d312d9893258f59&auto=format&fit=crop&w=1355&q=80'),
+      name: 'Water',
+      imageUrl:
+          'https://images.unsplash.com/photo-1559839914-17aae19cec71?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80', //https://unsplash.com/photos/7Zlds3gm7NU
+    ),
   ];
 }
